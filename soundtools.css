@@ -1,0 +1,80 @@
+.main {
+	text-align: center;
+	color: black;
+}
+
+.chakratuner {
+	display: inline-block;
+	min-width: 300px;
+	height: 350px;
+	width: 50vw;
+	border: 1px solid black;
+	border-radius: 5%;
+}
+
+.tunercontainer {
+
+}
+
+.tunertable {
+	width: 100%;
+}
+
+.keys {
+	font-size: 2em;
+	padding: 0px 15px 0px 15px;
+}
+
+.tableslider {
+	padding: 5px 0px 0px 5px;
+}
+
+.tdslider {
+	padding-top: 22px;
+	padding-bottom: 22px;
+}
+
+#slider-1, #slider-2 {
+	width: 90%
+}
+
+.tdlabel {
+	width: 150px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.tdlabel input{
+	width: 50px;
+}
+
+.key {
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.keyactive {
+	color: white;
+	background-color: green;
+}
+
+.keyoctave {
+	font-size: 0.6em;
+}
+
+.keynote {
+	font-size: 1.3em;
+}
+
+.freqslider {
+
+}
+
+.freqslider h3 {
+	padding-bottom: 0px;
+}
+
+.frequency {
+	font-size: 6em;
+}
