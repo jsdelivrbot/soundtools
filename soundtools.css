@@ -39,13 +39,15 @@
 }
 
 .tdlabel {
-	width: 150px;
+	width: 200px;
 	text-align: left;
 	padding-left: 10px;
 }
 
 .tdlabel input{
-	width: 50px;
+	width: 79px;
+	font-size: 1.5em;
+	text-align: center;
 }
 
 .key {
@@ -55,6 +57,9 @@
 }
 
 .keyactive {
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
 	color: white;
 	background-color: green;
 }

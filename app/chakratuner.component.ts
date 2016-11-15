@@ -21,17 +21,17 @@ import { FormsModule }   from '@angular/forms';
         </table>
         <table class="tunertable keys">
           <tr>
-            <td *ngFor="let key of keyfreqs" class="key" (click)="this.calcfreq = (key.value)">
+            <td *ngFor="let key of keyfreqs" [ngClass]="{ 'keyactive': (key.active), 'key': (!key.active) }" (click)="keyClick(key);">
               <div class="keyoctave">{{key.octave}}</div>
               <div class="keynote">{{key.key}}</div>
-              <div class="keyoctave">{{key.value}}</div>
+              <!-- <div class="keyoctave">{{key.value}}</div>  -->
             </td>
           </tr>
         </table>
         <div class="freqslider">
-          <h3>Frequency: <input type="number" min="0" max="20000" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()"></h3>
+          <h3>Frequency: <!-- <input type="number" min="0" max="20000" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()"> --> </h3>
           <div class="ui-slider">
-            <input type="range" name="slider-2" id="slider-2" min="0" max="20000" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
+            <input type="range" name="slider-2" id="slider-2" min="0" max="10000" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
           </div>
         </div>
         <div class="frequency">
@@ -64,7 +64,7 @@ export class ChakraTuner implements OnInit {
       { key: "E", offset: -5 },
       { key: "F", offset: -4 },
       { key: "G", offset: -2 },
-      { key: "A", offset: 0 },
+      { key: "A", offset: 0, active: true },
       { key: "B", offset: 2 }
     ];
     this.updateKeyOctaves();
@@ -74,23 +74,28 @@ export class ChakraTuner implements OnInit {
   masterChange() {
     this.updateKeyFreqs();
     this.updateKeyOctaves();
+    for(var x=0;x<this.keyfreqs.length;x++) {
+      if (this.keyfreqs[x].key == "A") {
+        this.keyfreqs[x].active = true;
+      } else {
+        this.keyfreqs[x].active = false;
+      }
+    }
   }
 
   freqChange() {
     this.updateKeyOctaves();
+  }
 
-    /*  calcfreqprev will have old value, calcfreq will have new,
-        this way we can figure out if they are sliding up or down
-
-        this slider is so coarse that we probably wont land on the specific
-        frequencies, we will need to MOVE from one key to another, maybe
-        we have a range?
-    */
-    if (this.calcfreq == 0) {
-      console.log("hit 0!");
-    }
-    if (this.calcfreq == 20000) {
-      console.log("hit 20000!");
+  keyClick(key:any) {
+    this.calcfreq = key.value;
+    this.updateKeyOctaves();
+    for(var x=0;x<this.keyfreqs.length;x++) {
+      if (key.key == this.keyfreqs[x].key) {
+        this.keyfreqs[x].active = true;
+      } else {
+        this.keyfreqs[x].active = false;
+      }
     }
   }
 
@@ -115,6 +120,8 @@ export class ChakraTuner implements OnInit {
     var newfreqs = [];
     var calculatedoctave:number;
     var freqdiff:number;
+    var octaveoffset:number;
+    octaveoffset = 0;
 
     newfreqs = this.keyfreqs;
 
@@ -133,7 +140,15 @@ export class ChakraTuner implements OnInit {
           calculatedoctave--;
         }
       }
+      if (newfreqs[x].offset < 0) {
+        calculatedoctave--;
+      } else if (newfreqs[x].offset > 11) {
+        calculatedoctave++;
+      }
       newfreqs[x].octave = calculatedoctave;
+      if (newfreqs[x].key == "A") {
+        this.masteroctave = calculatedoctave;
+      }
     }
     this.keyfreqs = newfreqs;
   }
