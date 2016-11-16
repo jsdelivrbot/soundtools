@@ -29,13 +29,13 @@ import { FormsModule }   from '@angular/forms';
           </tr>
         </table>
         <div class="freqslider">
-          <h3>Frequency: <!-- <input type="number" min="0" max="20000" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()"> --> </h3>
+          <h3>Frequency:  </h3>
           <div class="ui-slider">
             <input type="range" name="slider-2" id="slider-2" min="0" max="10000" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
           </div>
         </div>
         <div class="frequency">
-          {{calcfreq}}
+          <input type="number" min="0" max="10000" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
         </div>
       </div>
     </div>
@@ -45,10 +45,9 @@ import { FormsModule }   from '@angular/forms';
 export class ChakraTuner implements OnInit {
   private masterfreq:number;
   private calcfreq:number;
-  private calcfreqprev:number;
   private keyfreqs:any;
   private masteroctave:number;
-  test:any;
+  private TWELTH_ROOT:number;
 
   Constructor(){
   }
@@ -57,7 +56,6 @@ export class ChakraTuner implements OnInit {
     this.masterfreq = 440;
     this.calcfreq = 440;
     this.masteroctave = 4;
-    this.calcfreqprev = this.calcfreq;
     this.keyfreqs = [
       { key: "C", offset: -9 },
       { key: "D", offset: -7 },
@@ -67,90 +65,76 @@ export class ChakraTuner implements OnInit {
       { key: "A", offset: 0, active: true },
       { key: "B", offset: 2 }
     ];
-    this.updateKeyOctaves();
-    this.updateKeyFreqs();
+    this.TWELTH_ROOT = Math.pow(2, (1/12));
+    this.masterChange();
   }
 
   masterChange() {
-    this.updateKeyFreqs();
-    this.updateKeyOctaves();
-    for(var x=0;x<this.keyfreqs.length;x++) {
-      if (this.keyfreqs[x].key == "A") {
-        this.keyfreqs[x].active = true;
-      } else {
-        this.keyfreqs[x].active = false;
-      }
-    }
+    this.updateKeyOctaves();  /* set octaves of each key */
+    this.updateKeyFreqs();    /* set frequencies of each key */
+    this.activateKey("A");    /* light up A key */
   }
 
   freqChange() {
-    this.updateKeyOctaves();
+    this.updateKeyOctaves();  /* set octaves according to frequency slider */
+    /* there should be a function here that lights up the nearest key relative to master octave */
   }
 
   keyClick(key:any) {
+    /* this should actually pull a recalculated frequency based on the key.octave */
     this.calcfreq = key.value;
-    this.updateKeyOctaves();
-    for(var x=0;x<this.keyfreqs.length;x++) {
-      if (key.key == this.keyfreqs[x].key) {
-        this.keyfreqs[x].active = true;
-      } else {
-        this.keyfreqs[x].active = false;
-      }
-    }
+    this.updateKeyOctaves();  /* this currently resets octaves back to 3 and 4 */
+    this.activateKey(key.key);      /* light up key when clicked */
   }
 
-  updateKeyFreqs() {
-    var a:number = Math.pow(2, (1/12));
-    var newfreqs = [];
-    var calculatedfreq:number;
+  activateKey(keyNote:string){
+    this.keyfreqs.map((key:any) => {
+      key.active = (key.key == keyNote) ? true : false;
+    });
+  }
 
-    newfreqs = this.keyfreqs;
-
-    if (newfreqs.length > 0) {
-      for(var x=0;x<newfreqs.length;x++) {
-        calculatedfreq = Math.round(this.masterfreq * Math.pow(a, newfreqs[x].offset));
-        newfreqs[x].value = calculatedfreq;
-        if (newfreqs[x].key == "A") { this.calcfreq = calculatedfreq; }
-      }
-    }
-    this.keyfreqs = newfreqs;
+  updateKeyFreqs() {          /* runs when master tuning frequency is changed */
+    this.keyfreqs.map((key:any) => {
+      /* calculate the frequency based on master frequency and key.offset */
+      key.value = Math.round(this.masterfreq * Math.pow(this.TWELTH_ROOT, key.offset));
+    });
+    this.calcfreq = this.masterfreq;  /* set frequency slider to master frequency */
   }
 
   updateKeyOctaves() {
-    var newfreqs = [];
     var calculatedoctave:number;
     var freqdiff:number;
-    var octaveoffset:number;
-    octaveoffset = 0;
+    var oct_top:number = this.masterfreq * 2;
+    var oct_bottom:number = Math.round(this.masterfreq / 2);
 
-    newfreqs = this.keyfreqs;
-
-    for (var x=0;x<newfreqs.length;x++){
+    this.keyfreqs.map((key:any) => {
       calculatedoctave = 4;
-      if (this.calcfreq > (this.masterfreq) * 2) {
-        freqdiff = this.masterfreq * 2;
-        for(var i=1;this.calcfreq>freqdiff;i++){
+
+      /* frequency slider is above upper range of the master frequency's octave */
+      if (this.calcfreq > oct_top) {
+        freqdiff = oct_top;
+        while(this.calcfreq > freqdiff) {
           freqdiff = freqdiff * 2;
           calculatedoctave++;
         }
-      } else if (this.calcfreq < Math.round(this.masterfreq / 2)) {
-        freqdiff = Math.round(this.masterfreq / 2);
-        for(var i=0;freqdiff>this.calcfreq;i++){
+
+      /* frequency slider is below the lower range of master frequencie's octave */
+      } else if (this.calcfreq < oct_bottom) {
+        freqdiff = oct_bottom;
+        while(freqdiff>this.calcfreq) {
           freqdiff = freqdiff - Math.round(freqdiff / 2);
           calculatedoctave--;
         }
       }
-      if (newfreqs[x].offset < 0) {
-        calculatedoctave--;
-      } else if (newfreqs[x].offset > 11) {
-        calculatedoctave++;
-      }
-      newfreqs[x].octave = calculatedoctave;
-      if (newfreqs[x].key == "A") {
-        this.masteroctave = calculatedoctave;
-      }
-    }
-    this.keyfreqs = newfreqs;
+      /* octave splits in the middle, so if the note is below the master A frequency, it's the next octave down */
+      if (key.offset < 0) { calculatedoctave--; }
+
+      /* set octave */
+      key.octave = calculatedoctave;
+
+      /* if we are measuring A, set this to the master octave */
+      if (key.key == "A") { this.masteroctave = calculatedoctave; }
+    });
   }
 
 }

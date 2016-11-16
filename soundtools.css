@@ -5,7 +5,7 @@
 
 .chakratuner {
 	display: inline-block;
-	min-width: 300px;
+	min-width: 325px;
 	height: 350px;
 	width: 50vw;
 	border: 1px solid black;
@@ -80,6 +80,15 @@
 	padding-bottom: 0px;
 }
 
-.frequency {
+.frequency input {
+	margin-top: 1vw;
 	font-size: 6em;
+	border: 0px solid black;
+	border-radius: 10px;
+  padding-left: 1.5vw;
+  text-align: center;
+}
+
+.frequency input:focus {
+	outline: none;
 }
