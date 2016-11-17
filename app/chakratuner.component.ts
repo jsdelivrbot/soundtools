@@ -22,9 +22,14 @@ import { FormsModule }   from '@angular/forms';
         <table class="tunertable keys">
           <tr>
             <td *ngFor="let key of keyfreqs" [ngClass]="{ 'keyactive': (key.active), 'key': (!key.active) }" (click)="keyClick(key);">
-              <div class="keyoctave">{{key.octave}}</div>
-              <div class="keynote">{{key.key}}</div>
+              <div class="keyoctave"></div>
+              <div class="keynote">{{key.key}}{{key.octave}}</div>
               <!-- <div class="keyoctave">{{key.value}}</div> -->
+            </td>
+          </tr>
+          <tr>
+            <td *ngFor="let key of keyfreqs">
+              <div class="keyfrequency">{{key.value}}</div>
             </td>
           </tr>
         </table>

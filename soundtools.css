@@ -72,6 +72,12 @@
 	font-size: 1.3em;
 }
 
+.keyfrequency {
+	font-size: 0.2em;
+	font-style: italic;
+	color: #AAAAAA;
+}
+
 .freqslider {
 
 }
@@ -91,4 +97,16 @@
 
 .frequency input:focus {
 	outline: none;
+}
+
+@media (max-width: 960px){
+	.keynote {
+		font-size: 1em;
+	}
+}
+
+@media (max-width: 720px){
+	.keynote {
+		font-size: .75em
+	}
 }
