@@ -24,18 +24,18 @@ import { FormsModule }   from '@angular/forms';
             <td *ngFor="let key of keyfreqs" [ngClass]="{ 'keyactive': (key.active), 'key': (!key.active) }" (click)="keyClick(key);">
               <div class="keyoctave">{{key.octave}}</div>
               <div class="keynote">{{key.key}}</div>
-              <!-- <div class="keyoctave">{{key.value}}</div>  -->
+              <!-- <div class="keyoctave">{{key.value}}</div> -->
             </td>
           </tr>
         </table>
         <div class="freqslider">
           <h3>Frequency:  </h3>
           <div class="ui-slider">
-            <input type="range" name="slider-2" id="slider-2" min="0" max="10000" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
+            <input type="range" name="slider-2" id="slider-2" min="44" max="4400" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
           </div>
         </div>
         <div class="frequency">
-          <input type="number" min="0" max="10000" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
+          <input type="number" min="44" max="4400" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
         </div>
       </div>
     </div>
@@ -57,26 +57,29 @@ export class ChakraTuner implements OnInit {
     this.calcfreq = 440;
     this.masteroctave = 4;
     this.keyfreqs = [
-      { key: "C", offset: -9 },
-      { key: "D", offset: -7 },
-      { key: "E", offset: -5 },
-      { key: "F", offset: -4 },
-      { key: "G", offset: -2 },
-      { key: "A", offset: 0, active: true },
-      { key: "B", offset: 2 }
+      { key: "C", offset: -9, octave: 3 },
+      { key: "D", offset: -7, octave: 3 },
+      { key: "E", offset: -5, octave: 3 },
+      { key: "F", offset: -4, octave: 3 },
+      { key: "G", offset: -2, octave: 3 },
+      { key: "A", offset: 0, octave: 4, active: true },
+      { key: "B", offset: 2, octave: 4 }
     ];
     this.TWELTH_ROOT = Math.pow(2, (1/12));
     this.masterChange();
   }
 
   masterChange() {
-    this.updateKeyOctaves();  /* set octaves of each key */
+
     this.updateKeyFreqs();    /* set frequencies of each key */
+    this.updateKeyOctaves();  /* set octaves of each key */
     this.activateKey("A");    /* light up A key */
   }
 
   freqChange() {
     this.updateKeyOctaves();  /* set octaves according to frequency slider */
+    /* this.updateFreqFromOctave(); */
+
     /* there should be a function here that lights up the nearest key relative to master octave */
   }
 
@@ -102,6 +105,36 @@ export class ChakraTuner implements OnInit {
   }
 
   updateKeyOctaves() {
+  	this.keyfreqs.map((key:any) => {
+  		let oct_top:number = key.value * 2;
+  		let oct_bottom:number = Math.round(key.value / 2);
+  		let calculatedoctave:number = key.octave;
+  		while (this.calcfreq > oct_top) { oct_top = oct_top * 2; calculatedoctave++; }
+  		while (oct_bottom >= this.calcfreq) { oct_bottom = oct_bottom - Math.round(oct_bottom / 2); calculatedoctave--; }
+      let octavediff:number = calculatedoctave - key.octave;
+      let freqdiff:number = key.value;
+      while (octavediff < 0) { freqdiff = Math.round(freqdiff / 2); octavediff++ }
+  		while (octavediff > 0) { freqdiff = freqdiff * 2; octavediff-- }
+      key.value = freqdiff;
+      key.octave = calculatedoctave;
+  		if (key.key == "A") { this.masteroctave = calculatedoctave; }
+    });
+  }
+
+  updateFreqFromOctave() {
+  	this.keyfreqs.map((key:any) => {
+      console.log("OCTAVE: " + key.octave);
+  		let octavediff:number = (key.offset < 0) ? (key.octave - 3) : (key.octave - 4);
+      console.log("OCTAVEDIFF: " + octavediff);
+      let freqdiff:number = key.value;
+  		while (octavediff < 0) { freqdiff = Math.round(freqdiff / 2); octavediff++ }
+  		while (octavediff > 0) { freqdiff = freqdiff * 2; octavediff-- }
+      key.value = freqdiff;
+      console.log("VALUE: " + key.value);
+  	});
+  }
+
+  updateKeyOctaves2() {
     var calculatedoctave:number;
     var freqdiff:number;
     var oct_top:number = this.masterfreq * 2;
