@@ -1,0 +1,38 @@
+<h3>Chakra Tuner</h3>
+<div class="chakratuner">
+  <div class="tunercontainer">
+    <table class="tunertable tableslider">
+      <tr>
+        <td class="tdlabel">Master Tuning: <input type="number" min="220" max="880" [(ngModel)]="masterfreq" (ngModelChange)="masterChange()"></td>
+        <td class="tdslider">
+          <div class="ui-slider">
+            <input type="range" name="mastertune" id="slider-1" min="220" max="880" step="1" value="440" [(ngModel)]="masterfreq" (ngModelChange)="masterChange()">
+          </div>
+        </td>
+      </tr>
+    </table>
+    <table class="tunertable keys">
+      <tr>
+        <td *ngFor="let key of keyfreqs" [ngClass]="{ 'keyactive': (key.active), 'key': (!key.active) }" (click)="keyClick(key);">
+          <div class="keyoctave"></div>
+          <div class="keynote">{{key.key}}{{key.octave}}</div>
+          <!-- <div class="keyoctave">{{key.value}}</div> -->
+        </td>
+      </tr>
+      <tr>
+        <td *ngFor="let key of keyfreqs">
+          <div class="keyfrequency">{{key.value}}</div>
+        </td>
+      </tr>
+    </table>
+    <div class="freqslider">
+      <h3>Frequency:  </h3>
+      <div class="ui-slider">
+        <input type="range" name="slider-2" id="slider-2" min="44" max="4400" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
+      </div>
+    </div>
+    <div class="frequency">
+      <input type="number" min="44" max="4400" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
+    </div>
+  </div>
+</div>

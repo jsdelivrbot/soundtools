@@ -5,46 +5,7 @@ import { FormsModule }   from '@angular/forms';
 
 @Component({
   selector: 'chakratuner',
-  template: `
-    <h3>Chakra Tuner</h3>
-    <div class="chakratuner">
-      <div class="tunercontainer">
-        <table class="tunertable tableslider">
-          <tr>
-            <td class="tdlabel">Master Tuning: <input type="number" min="220" max="880" [(ngModel)]="masterfreq" (ngModelChange)="masterChange()"></td>
-            <td class="tdslider">
-              <div class="ui-slider">
-                <input type="range" name="mastertune" id="slider-1" min="220" max="880" step="1" value="440" [(ngModel)]="masterfreq" (ngModelChange)="masterChange()">
-              </div>
-            </td>
-          </tr>
-        </table>
-        <table class="tunertable keys">
-          <tr>
-            <td *ngFor="let key of keyfreqs" [ngClass]="{ 'keyactive': (key.active), 'key': (!key.active) }" (click)="keyClick(key);">
-              <div class="keyoctave"></div>
-              <div class="keynote">{{key.key}}{{key.octave}}</div>
-              <!-- <div class="keyoctave">{{key.value}}</div> -->
-            </td>
-          </tr>
-          <tr>
-            <td *ngFor="let key of keyfreqs">
-              <div class="keyfrequency">{{key.value}}</div>
-            </td>
-          </tr>
-        </table>
-        <div class="freqslider">
-          <h3>Frequency:  </h3>
-          <div class="ui-slider">
-            <input type="range" name="slider-2" id="slider-2" min="44" max="4400" step="1" value="440" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
-          </div>
-        </div>
-        <div class="frequency">
-          <input type="number" min="44" max="4400" [(ngModel)]="calcfreq" (ngModelChange)="freqChange()">
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: 'app/chakratuner.template.html'
 })
 
 export class ChakraTuner implements OnInit {
@@ -83,7 +44,7 @@ export class ChakraTuner implements OnInit {
 
   freqChange() {
     this.updateKeyOctaves();  /* set octaves according to frequency slider */
-    /* this.updateFreqFromOctave(); */
+    this.activateClosestKey();
 
     /* there should be a function here that lights up the nearest key relative to master octave */
   }
@@ -126,53 +87,14 @@ export class ChakraTuner implements OnInit {
     });
   }
 
-  updateFreqFromOctave() {
-  	this.keyfreqs.map((key:any) => {
-      console.log("OCTAVE: " + key.octave);
-  		let octavediff:number = (key.offset < 0) ? (key.octave - 3) : (key.octave - 4);
-      console.log("OCTAVEDIFF: " + octavediff);
-      let freqdiff:number = key.value;
-  		while (octavediff < 0) { freqdiff = Math.round(freqdiff / 2); octavediff++ }
-  		while (octavediff > 0) { freqdiff = freqdiff * 2; octavediff-- }
-      key.value = freqdiff;
-      console.log("VALUE: " + key.value);
-  	});
-  }
-
-  updateKeyOctaves2() {
-    var calculatedoctave:number;
-    var freqdiff:number;
-    var oct_top:number = this.masterfreq * 2;
-    var oct_bottom:number = Math.round(this.masterfreq / 2);
-
+  activateClosestKey() {
+    var closestKey = this.keyfreqs.find(function(key:any){ return key.active == true; });
+    var keyDifference = Math.abs(this.calcfreq - closestKey.value);
     this.keyfreqs.map((key:any) => {
-      calculatedoctave = 4;
-
-      /* frequency slider is above upper range of the master frequency's octave */
-      if (this.calcfreq > oct_top) {
-        freqdiff = oct_top;
-        while(this.calcfreq > freqdiff) {
-          freqdiff = freqdiff * 2;
-          calculatedoctave++;
-        }
-
-      /* frequency slider is below the lower range of master frequencie's octave */
-      } else if (this.calcfreq < oct_bottom) {
-        freqdiff = oct_bottom;
-        while(freqdiff>this.calcfreq) {
-          freqdiff = freqdiff - Math.round(freqdiff / 2);
-          calculatedoctave--;
-        }
-      }
-      /* octave splits in the middle, so if the note is below the master A frequency, it's the next octave down */
-      if (key.offset < 0) { calculatedoctave--; }
-
-      /* set octave */
-      key.octave = calculatedoctave;
-
-      /* if we are measuring A, set this to the master octave */
-      if (key.key == "A") { this.masteroctave = calculatedoctave; }
+      keyDifference = Math.abs(this.calcfreq - closestKey.value);
+      if (Math.abs(this.calcfreq - key.value) < keyDifference) { closestKey = key; }
+      key.active = false;
     });
+    closestKey.active = true;
   }
-
 }
