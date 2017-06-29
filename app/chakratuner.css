@@ -1,0 +1,107 @@
+.chakratuner {
+	display: inline-block;
+	min-width: 325px;
+	height: 365px;
+	width: 50vw;
+	border: 1px solid black;
+	border-radius: 5%;
+}
+
+.tunercontainer {
+
+}
+
+.tunertable {
+	width: 100%;
+}
+
+.keys {
+	font-size: 2em;
+	padding: 0px 15px 0px 15px;
+}
+
+.tableslider {
+	padding: 5px 0px 0px 5px;
+}
+
+.tdslider {
+	padding-top: 22px;
+	padding-bottom: 22px;
+}
+
+#slider-1, #slider-2 {
+	width: 90%
+}
+
+.tdlabel {
+	width: 200px;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.tdlabel input{
+	width: 79px;
+	font-size: 1.5em;
+	text-align: center;
+}
+
+.key {
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.keyactive {
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
+	color: white;
+	background-color: green;
+}
+
+.keyoctave {
+	font-size: 0.6em;
+}
+
+.keynote {
+	font-size: 1.3em;
+}
+
+.keyfrequency {
+	font-size: 0.2em;
+	font-style: italic;
+	color: #AAAAAA;
+}
+
+.freqslider {
+
+}
+
+.freqslider h3 {
+	padding-bottom: 0px;
+}
+
+.frequency input {
+	margin-top: 1vw;
+	font-size: 6em;
+	border: 0px solid black;
+	border-radius: 10px;
+  padding-left: 1.5vw;
+  text-align: center;
+}
+
+.frequency input:focus {
+	outline: none;
+}
+
+@media (max-width: 960px){
+	.keynote {
+		font-size: 1em;
+	}
+}
+
+@media (max-width: 720px){
+	.keynote {
+		font-size: .75em
+	}
+}

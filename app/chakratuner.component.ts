@@ -5,7 +5,9 @@ import { FormsModule }   from '@angular/forms';
 
 @Component({
   selector: 'chakratuner',
-  templateUrl: 'app/chakratuner.template.html'
+  templateUrl: 'app/chakratuner.template.html',
+  styleUrls: ['app/chakratuner.css']
+
 })
 
 export class ChakraTuner implements OnInit {

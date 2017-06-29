@@ -8,7 +8,8 @@ import { ChakraTuner } from './chakratuner.component';
         <h1>Sound Tools</h1>
         <chakratuner></chakratuner>
       </div>
-    `
+    `,
+    styleUrls: ['soundtools.css']
 })
 
 export class AppComponent { }
