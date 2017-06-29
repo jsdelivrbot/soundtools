@@ -1,7 +1,7 @@
 {
   "name": "soundtools",
   "version": "1.0.0",
-  "description": "Chakra tuner",
+  "description": "Chakra Tuner",
   "engines": {
     "node": "6.10.2"
   },
